@@ -1,11 +1,11 @@
 const _ = require('lodash');
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-var {mongoose} = require('./db/mongoose.js');
-var {Todo} = require('./models/todo.js');
-var {User} = require('./models/user.js');
-var {ObjectID} = require('mongodb');
+const {mongoose} = require('./db/mongoose.js');
+const {Todo} = require('./models/todo.js');
+const {User} = require('./models/user.js');
+const {ObjectID} = require('mongodb');
 
 var app = express();
 const port = process.env.PORT || 3000
@@ -88,7 +88,18 @@ app.patch('/todos/:todoID', function(req, res){
     })
 });
 
+app.post('/users', function(req, res){
+    var body = _.pick(req.body, ['email', 'password']);
+    var user = new User(body);
 
+    user.save().then(function(){
+        return user.generateAuthToken();
+    }).then(function(token){
+        res.header('x-auth', token).send(user);
+    }).catch(function(err){
+        res.status(400).send(err);
+    });
+});
 
 
 
