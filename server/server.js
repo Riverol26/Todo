@@ -7,6 +7,8 @@ const {Todo} = require('./models/todo.js');
 const {User} = require('./models/user.js');
 const {ObjectID} = require('mongodb');
 
+var {authenticate} = require('./middleware/authenticate');
+
 var app = express();
 const port = process.env.PORT || 3000
 
@@ -102,6 +104,10 @@ app.post('/users', function(req, res){
 });
 
 
+
+app.get('/users/me', authenticate, function(req, res){
+    res.send(req.user);
+});
 
 
 
